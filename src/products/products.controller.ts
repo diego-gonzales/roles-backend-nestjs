@@ -11,13 +11,14 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Public } from './../shared/custom-decorators/public.decorator';
+import { Roles } from '../shared/custom-decorators/roles.decorator';
 
 @Controller('products')
 export class ProductsController {
 
   constructor(private readonly productsService: ProductsService) {}
 
-
+  @Roles('moderator', 'admin')
   @Post()
   async create(@Body() createProductDto: CreateProductDto) {
     const createdProduct = await this.productsService.create(createProductDto);
@@ -55,6 +56,7 @@ export class ProductsController {
     };
   };
 
+  @Roles('admin')
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     try {
@@ -72,6 +74,7 @@ export class ProductsController {
     };
   };
 
+  @Roles('admin')
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {

@@ -3,25 +3,20 @@ import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Public } from './../shared/custom-decorators/public.decorator';
+import { Roles } from '../shared/custom-decorators/roles.decorator';
 
 @Controller('roles')
 export class RolesController {
 
   constructor(private readonly rolesService: RolesService) {}
 
-
+  @Roles('moderator', 'admin')
   @Post()
   async create(@Body() createRoleDto: CreateRoleDto) {
-    try {
-      const role = await this.rolesService.create(createRoleDto);
-      return {
-        ok: true,
-        role
-      };
-
-    } catch (error) {
-      // se dispara porque en nuestro esquema el nombre del rol es 'unique'
-      throw new BadRequestException('Role has already been created');
+    const role = await this.rolesService.create(createRoleDto);
+    return {
+      ok: true,
+      role
     };
   };
 
@@ -38,52 +33,30 @@ export class RolesController {
   @Public()
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    try {
-      const role = await this.rolesService.findOne(id);
-
-      if (!role) throw new NotFoundException('Role does not exists');
-
-      return {
-        ok: true,
-        role
-      };
-
-    } catch (error) {
-      throw new NotFoundException('Role does not exists');
+    const role = await this.rolesService.findOne(id);
+    return {
+      ok: true,
+      role
     };
   };
 
+  @Roles('admin')
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
-    try {
-      const role = await this.rolesService.update(id, updateRoleDto);
-
-      if (!role) throw new NotFoundException('Role does not exists');
-
-      return {
-        ok: true,
-        role
-      };
-
-    } catch (error) {
-      throw new NotFoundException('Role does not exists');
+    const role = await this.rolesService.update(id, updateRoleDto);
+    return {
+      ok: true,
+      role
     };
   };
 
+  @Roles('admin')
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    try {
-      const role = await this.rolesService.remove(id);
-
-      if (!role) throw new NotFoundException('Role does not exists');
-
-      return {
-        ok: true,
-        role
-      };
-
-    } catch (error) {
-      throw new NotFoundException('Role does not exists');
+    const role = await this.rolesService.remove(id);
+    return {
+      ok: true,
+      role
     };
   };
 

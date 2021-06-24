@@ -13,11 +13,13 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from './../shared/custom-decorators/public.decorator';
 import { RoleIdDto } from '../roles/dto/role-id.dto';
+import { Roles } from '../shared/custom-decorators/roles.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles('moderator', 'admin')
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
@@ -62,6 +64,7 @@ export class UsersController {
     };
   };
 
+  @Roles('admin')
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -79,6 +82,7 @@ export class UsersController {
     };
   };
 
+  @Roles('admin')
   @Delete(':id')
   async remove(@Param('id') id: string) {
     try {
@@ -96,16 +100,25 @@ export class UsersController {
     };
   };
 
-  @Public()
+  // Los siguientes métodos manejadores de rutas son para eliminarle y agregarle un role a un usuario
+  @Roles('admin')
   @Patch('remove-role/:idUser')
   async removeRoleToUser(@Param('idUser') idUser: string, @Body() roleIdDto: RoleIdDto) {
     const userWithRemovedRole = await this.usersService.removeRoleToUser(idUser, roleIdDto);
-
-    if (!userWithRemovedRole) throw new NotFoundException('User does not exists');
-
     return {
       ok: true,
       user: userWithRemovedRole
     };
   };
+
+  @Roles('admin')
+  @Patch('add-role/:idUser')
+  async addRoleToUser(@Param('idUser') idUser: string, @Body() roleIdDto: RoleIdDto) {
+    const userWithAddedRole = await this.usersService.addRoleToUser(idUser, roleIdDto);
+    return {
+      ok: true,
+      user: userWithAddedRole
+    };
+  };
+
 }

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -61,13 +61,44 @@ export class UsersService {
 
   // Metodo que remueve un rol a un usuario
   async removeRoleToUser(idUser: string, roleIdDto: RoleIdDto) {
-    const { role_id } = roleIdDto;
+    // El try catch tambien los podemos manejar de este lado y ya no en el controlador (Es mejor acá a mi parecer)
+    try {
+      const { role_id } = roleIdDto;
+  
+      const userWithRemovedRole = await this.userModel.findByIdAndUpdate(idUser, {
+        $pull: { roles: role_id }
+      }, { new: true });
 
-    const userWithRemovedRole = await this.userModel.findByIdAndUpdate(idUser, {
-      $pull: { roles: role_id }
-    }, { new: true });
+      if (!userWithRemovedRole) throw new NotFoundException('User does not exists');
 
-    return userWithRemovedRole;
+      return userWithRemovedRole;
+
+    } catch (error) {
+      // Esto se disparará cuando mandemos un idUser que no tenga la forma de un ID de mongo (por defecto se manda error 500)
+      // Osea ocurre un error dentro de mongo, por eso el error 500, no sería lo más conveniente este mensaje
+      // en caso sea otro tipo de error de mongo
+      throw new NotFoundException('User does not exists');
+    };
+  };
+
+  async addRoleToUser(idUser: string, roleIdDto: RoleIdDto) {
+    try {
+      const { role_id } = roleIdDto;
+  
+      const userWithAddedRole = await this.userModel.findByIdAndUpdate(idUser, {
+        $addToSet: { roles: role_id}
+      },{ new: true });
+  
+      if (!userWithAddedRole) throw new NotFoundException('User does not exists');
+  
+      return userWithAddedRole;
+
+    } catch (error) {
+      // Esto se disparará cuando mandemos un idUser que no tenga la forma de un ID de mongo (por defecto se manda error 500)
+      // Osea ocurre un error dentro de mongo, por eso el error 500, no sería lo más conveniente este mensaje
+      // en caso sea otro tipo de error de mongo
+      throw new NotFoundException('User does not exists');
+    };
   };
 
 }

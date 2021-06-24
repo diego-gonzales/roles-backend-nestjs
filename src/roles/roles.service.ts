@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -12,7 +12,11 @@ export class RolesService {
 
 
   async create(createRoleDto: CreateRoleDto) {
-    return new this.roleModel(createRoleDto).save();
+    try {
+      return await new this.roleModel(createRoleDto).save();
+    } catch (error) {
+      throw new BadRequestException('Roles has already been created')
+    }
   };
 
   async findAll() {
@@ -20,15 +24,42 @@ export class RolesService {
   };
 
   async findOne(id: string) {
-    return this.roleModel.findById(id);
+    try {
+      const roleFound = await this.roleModel.findById(id);
+
+      if (!roleFound) throw new NotFoundException('Role does not exists');
+
+      return roleFound;
+
+    } catch (error) {
+      throw new NotFoundException('Role does not exists');
+    };
   };
 
   async update(id: string, updateRoleDto: UpdateRoleDto) {
-    return this.roleModel.findByIdAndUpdate(id, updateRoleDto, { new: true });
+    try {
+      const updatedRole = await this.roleModel.findByIdAndUpdate(id, updateRoleDto, { new: true });
+
+      if (!updatedRole) throw new Error(); // se disparará lo del catch
+
+      return updatedRole;
+
+    } catch (error) {
+      throw new NotFoundException('Role does not exists');
+    };
   };
 
   async remove(id: string) {
-    return this.roleModel.findByIdAndDelete(id);
+    try {
+      const deletedRole = await this.roleModel.findByIdAndDelete(id);
+
+      if (!deletedRole) throw new Error(); // se disparará lo del catch
+
+      return deletedRole;
+
+    } catch (error) {
+      throw new NotFoundException('Role does not exists');
+    };
   };
 
   // Metodo que se llamará al iniciar la app, en el main.ts, y creará los roles por defecto
