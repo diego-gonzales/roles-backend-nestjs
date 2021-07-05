@@ -18,6 +18,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const createdUser = new this.userModel(createUserDto);
+
     // Hasheamos la contraseña antes de guardarla en la DB
     const salt = await bcrypt.genSalt();
     createdUser.password = await bcrypt.hash(createUserDto.password, salt);
@@ -27,7 +28,7 @@ export class UsersService {
       // en caso el array de foundRoles venga vacio podriamos validarlo, pero si eso pasa entonces no se asigna ningun rol
       if (foundRoles.length <= 0) throw new BadRequestException('Role assign does not exists');
 
-      createdUser.roles = foundRoles.map( role => role._id);
+      createdUser.roles = foundRoles.map(role => role._id);
       console.log(createUserDto.roles);
     } else {
       const userRole = await this.rolesService.findUserRole();
@@ -52,7 +53,31 @@ export class UsersService {
   };
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+    if (updateUserDto.roles) {
+      const foundRoles = await this.rolesService.findRoles(updateUserDto.roles);
+
+      if (foundRoles.length <= 0) throw new BadRequestException('Role assign does not exists');
+      // actualiza el rol a un usuario, es el mismo codigo del de crear user
+      updateUserDto.roles = foundRoles.map(role => role._id);
+    };
+
+    return await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+  };
+
+  async updatePassword(id: string, newPassword: UpdateUserDto) {
+    try {
+      const salt = await bcrypt.genSalt();
+      newPassword.password = await bcrypt.hash(newPassword.password, salt);
+
+      const user = await this.userModel.findByIdAndUpdate(id, newPassword, { new: true });
+
+      if (!user) throw new Error();
+
+      return user;
+
+    } catch (error) {
+      throw new NotFoundException('User does not exists');
+    };
   };
 
   async remove(id: string) {
@@ -86,7 +111,7 @@ export class UsersService {
       const { role_id } = roleIdDto;
   
       const userWithAddedRole = await this.userModel.findByIdAndUpdate(idUser, {
-        $addToSet: { roles: role_id}
+        $addToSet: { roles: role_id} // addToSet no agrega si es que ya existe
       },{ new: true });
   
       if (!userWithAddedRole) throw new NotFoundException('User does not exists');

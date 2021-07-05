@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RolesModule } from './roles/roles.module';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
+import { CustomersModule } from './customers/customers.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { SharedModule } from './shared/shared.module';
       }
     }),
     SharedModule,
+    CustomersModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

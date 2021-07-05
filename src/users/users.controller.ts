@@ -31,7 +31,8 @@ export class UsersController {
 
     } catch (error) {
       // se dispara porque en nuestro esquema username y contraseña son 'uniques'
-      throw new BadRequestException('Username or email have already been registered');
+      // throw new BadRequestException('Username or email have already been registered');
+      throw error;
     };
   };
 
@@ -79,6 +80,16 @@ export class UsersController {
 
     } catch (error) {
       throw new NotFoundException('User does not exists');
+    };
+  };
+
+  @Roles('admin')
+  @Patch('updatePass/:id')
+  async updatePassword(@Param('id') id: string, @Body() newPassword: UpdateUserDto) {
+    const userWithUpdatedPassword = await this.usersService.updatePassword(id, newPassword);
+    return {
+      ok: true,
+      user: userWithUpdatedPassword
     };
   };
 

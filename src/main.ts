@@ -7,6 +7,8 @@ import { RolesService } from './roles/roles.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   const configService = app.get(ConfigService); // manera de acceder a un servicio
   const port = configService.get('PORT');
 
