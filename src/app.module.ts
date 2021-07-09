@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { CustomersModule } from './customers/customers.module';
 import { CategoriesModule } from './categories/categories.module';
+import { SalesModule } from './sales/sales.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CategoriesModule } from './categories/categories.module';
     SharedModule,
     CustomersModule,
     CategoriesModule,
+    SalesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

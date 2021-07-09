@@ -13,7 +13,7 @@ export class ProductsService {
                private categoriesService: CategoriesService ) { }
 
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
+  async create(createProductDto: CreateProductDto) {
     const createdProduct = new this.productModel(createProductDto);
     // Buscamos que exista la categoría proveida en la coleccion 'Categories'
     const categoryFound = await this.categoriesService.findCategoryByName(createProductDto.category)
@@ -24,11 +24,11 @@ export class ProductsService {
     return createdProduct.save();
   };
 
-  async findAll(): Promise<Product[]> {
+  async findAll() {
     return this.productModel.find().exec();
   };
 
-  async findOne(id: string): Promise<Product> {
+  async findOne(id: string) {
     try {
       const productFound = await this.productModel.findById(id);
       if (!productFound) throw new NotFoundException('Product does not exists');
@@ -58,7 +58,7 @@ export class ProductsService {
     };
   };
 
-  async remove(id: string): Promise<Product> {
+  async remove(id: string) {
     try {
       const deletedProduct = await this.productModel.findByIdAndDelete(id);
   
