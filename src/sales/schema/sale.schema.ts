@@ -3,7 +3,6 @@ import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 
 import { Customer } from '../../customers/schema/customer.schema';
-import { Product } from '../../products/entities/product.entity';
 import { User } from '../../users/schema/user.schema';
 
 
@@ -14,7 +13,8 @@ export type SaleDocument = Sale & Document;
     versionKey: false
 })
 export class Sale {
-    @Prop({ type:  mongoose.Schema.Types.ObjectId, ref: 'Customer', autopopulate: true })
+    // por defecto este campo tiene el valor de un id que es del 'publico en general'
+    @Prop({ type:  mongoose.Schema.Types.ObjectId, ref: 'Customer', autopopulate: true, default: '60e7724dde60ca22187ed745' })
     customer: Customer;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true })
@@ -22,12 +22,11 @@ export class Sale {
 
     @Prop(raw([{
         product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', autopopulate: true },
-        quantity: { type: Number }
+        quantity: { type: Number, default: 0 }
     }]))
     products: any;
     // products: Record<string, any>;
     // products: [{product: Product, quantity: number}];
-    abc: string
     @Prop({ required: true })
     totalPrice: number;
 };

@@ -58,6 +58,24 @@ export class ProductsService {
     };
   };
 
+  /* Metodo que me actualiza el stock de un producto al hacer una venta
+   (ver metodo create de SalesService, allí se usa este metodo)*/
+  async updateProductStock(idProduct: string, quantityToSale: number) {
+    try {
+      const product = await this.productModel.findById(idProduct);
+
+      if (!product) throw new NotFoundException('Product does not exists');
+      if (product.stock < quantityToSale) throw new BadRequestException('Not enough stock');
+
+      const newStock = product.stock - quantityToSale;
+
+      await this.update(idProduct, { stock: newStock } );
+
+    } catch (error) {
+      throw error;
+    };
+  };
+
   async remove(id: string) {
     try {
       const deletedProduct = await this.productModel.findByIdAndDelete(id);
