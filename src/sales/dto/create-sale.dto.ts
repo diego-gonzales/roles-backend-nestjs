@@ -1,5 +1,9 @@
 import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
+interface ProductElement {
+    product: string;
+    quantity: number;
+}
 export class CreateSaleDto {
     @IsMongoId()
     @IsOptional()
@@ -11,7 +15,7 @@ export class CreateSaleDto {
 
     @IsNotEmpty()
     @IsArray({message: 'products must be an array of type [{product mongoID, quantity}]'})
-    products: any; // [ product: ObjectId de Product, quantity: Number]
+    products: ProductElement[]; // [ product: ObjectId de Product, quantity: Number]
 
     // @IsNotEmpty()
     // @IsArray({message: 'products must be an array of mongoID'})

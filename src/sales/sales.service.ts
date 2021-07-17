@@ -5,17 +5,27 @@ import { Model } from 'mongoose';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { Sale, SaleDocument } from './schema/sale.schema';
+import { ProductsService } from '../products/products.service';
 
 
 @Injectable()
 export class SalesService {
 
-  constructor(@InjectModel(Sale.name) private saleModel: Model<SaleDocument>) { }
+  constructor(@InjectModel(Sale.name) private saleModel: Model<SaleDocument>,
+              private productService: ProductsService) { }
 
 
   async create(createSaleDto: CreateSaleDto) {
     try {
+      const { products } = createSaleDto;
+
+      for (let i = 0; i < products.length; i++) {
+        const { product, quantity } = products[i];
+        await this.productService.updateProductStock(product, quantity);
+      };
+
       return await new this.saleModel(createSaleDto).save();
+
     } catch (error) {
       throw error;
     };
