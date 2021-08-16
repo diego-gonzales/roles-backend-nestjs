@@ -11,7 +11,7 @@ export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
 
-  @Roles('moderator', 'admin')
+  @Roles('user', 'moderator', 'admin')
   @Post()
   async create(@Body() createCustomerDto: CreateCustomerDto) {
     const createdCustomer = await this.customersService.create(createCustomerDto);
