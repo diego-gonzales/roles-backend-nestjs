@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 
-import { Category } from '../../categories/entities/category.entity';
 import { Status } from './../../shared/enums/status.enum';
+import { Category } from './../../categories/schema/category.schema';
 
 
 export type ProductDocument = Product & Document;

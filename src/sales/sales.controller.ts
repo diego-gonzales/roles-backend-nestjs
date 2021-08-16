@@ -11,7 +11,7 @@ export class SalesController {
   constructor(private readonly salesService: SalesService) {}
 
 
-  @Roles('moderator', 'admin')
+  @Roles('user', 'moderator', 'admin')
   @Post()
   async create(@Body() createSaleDto: CreateSaleDto) {
     const sale = await this.salesService.create(createSaleDto);
