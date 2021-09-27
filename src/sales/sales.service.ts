@@ -6,17 +6,24 @@ import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { Sale, SaleDocument } from './schema/sale.schema';
 import { ProductsService } from '../products/products.service';
+import { CustomersService } from '../customers/customers.service';
 
 
 @Injectable()
 export class SalesService {
 
   constructor(@InjectModel(Sale.name) private saleModel: Model<SaleDocument>,
-              private productService: ProductsService) { }
+              private productService: ProductsService,
+              private customerService: CustomersService) {}
 
 
   async create(createSaleDto: CreateSaleDto) {
     try {
+      // Useful when sending a empty customer from frontend, set customer 'General Public' by default.
+      if (createSaleDto.customer === '' || !createSaleDto.customer) {
+        createSaleDto.customer = await this.customerService.getDefaultCustomerID();
+      };
+
       const { products } = createSaleDto;
 
       for (let i = 0; i < products.length; i++) {

@@ -59,4 +59,36 @@ export class CustomersService {
     };
   };
 
+  async createDefaultCustomer() {
+    try {
+      const totalCustomers = await this.customerModel.estimatedDocumentCount();
+
+      if (totalCustomers > 0) {
+        console.log('There are already customers');
+        return;
+      }
+
+      await new this.customerModel({
+        documentNumber: '00000',
+        name: 'General Public',
+        address: '00000',
+        phoneNumber: '00000'
+      }).save();
+
+      console.log('Default customer has been created');
+
+    } catch (error) {
+      console.log(error);
+    };
+  };
+
+  async getDefaultCustomerID() {
+    try {
+      const defaultCustomer = await this.customerModel.findOne({ name: 'General Public' });
+      return defaultCustomer.id;
+
+    } catch (error) {
+      console.log(error);
+    };
+  };
 }

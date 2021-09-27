@@ -13,8 +13,9 @@ export type SaleDocument = Sale & Document;
     versionKey: false
 })
 export class Sale {
-    // por defecto este campo tiene el valor de un id que es del 'publico en general'
-    @Prop({ type:  mongoose.Schema.Types.ObjectId, ref: 'Customer', autopopulate: true, default: '60e7724dde60ca22187ed745' })
+    // por defecto le habia puesto el id del customer 'General Public' pero no es conveniente si cambia ese id, mejor lo hice en el servicio
+    // de 'sales' le agregué una condición por si se manda un customer vacio
+    @Prop({ type:  mongoose.Schema.Types.ObjectId, ref: 'Customer', autopopulate: true })
     customer: Customer;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true })

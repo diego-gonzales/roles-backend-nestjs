@@ -8,6 +8,9 @@ import { Customer, CustomerSchema } from './schema/customer.schema';
   imports: [
     MongooseModule.forFeature([{ name: Customer.name, schema: CustomerSchema }])
   ],
+  exports: [
+    CustomersService
+  ],
   controllers: [CustomersController],
   providers: [CustomersService]
 })

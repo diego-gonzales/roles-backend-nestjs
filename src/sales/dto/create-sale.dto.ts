@@ -7,7 +7,7 @@ interface ProductElement {
 export class CreateSaleDto {
     @IsMongoId()
     @IsOptional()
-    customer: any; // id del producto
+    customer: any; // id del customer
 
     @IsMongoId()
     @IsNotEmpty()

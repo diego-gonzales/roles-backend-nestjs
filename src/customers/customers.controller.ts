@@ -60,4 +60,13 @@ export class CustomersController {
       customer: deletedCustomer
     };
   };
+
+  @Public()
+  @Get('/default/customer')
+  async getDefaultID() {
+    const abc = await this.customersService.getDefaultCustomerID();
+    return {
+      abc
+    };
+  };
 }
