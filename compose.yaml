@@ -1,0 +1,29 @@
+services:
+  server:
+    build:
+      context: .
+    links:
+      - roles-database
+    environment:
+      # si no se la coloca, la aplicación Node.js utilizará su valor predeterminado (generalmente "development") 
+      NODE_ENV: production
+    ports:
+      - 3000:3000
+    networks:
+      - my-network
+
+  roles-database:
+    image: mongo:5.0
+    volumes:
+      - my-database:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - my-network
+    restart: always
+
+volumes:
+  my-database:
+
+networks:
+  my-network:

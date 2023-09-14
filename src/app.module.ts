@@ -22,7 +22,8 @@ import { SalesModule } from './sales/sales.module';
       envFilePath: '.development.env',
       isGlobal: true // establecer esta opcion en true o importarlo en cada modulo necesario
     }),
-    MongooseModule.forRoot('mongodb://localhost/nest-roles-jwt', {
+    // usar el nombre de contenedor de docker para la conexion a la base de datos en lugar de localhost
+    MongooseModule.forRoot('mongodb://roles-database-1:27017/nest-roles-jwt', {
       useFindAndModify: false,
       useCreateIndex: true,
       connectionFactory: (connection) => {
